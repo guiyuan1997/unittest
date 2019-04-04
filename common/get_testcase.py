@@ -1,29 +1,15 @@
-import pandas as pd
+#encoding=UTF-8
+import xlrd
 import os
-import re
 class Testcase():
-    variable = ['path','method','data','cookie','code','messge']
     def __init__(self,path,name):
-        self.path = os.path.join(path, name)
-    #将读取的data数据转化为list类型
-    def list_data(self,data):
-        b=re.split(',',data)
-        c = list(d.strip('[]') for d in b)
-        return c
+        self.__path = os.path.join(path,name)
     def read(self):
-        dict = pd.read_csv(filepath_or_buffer=self.path,sep=';')
-        for variable in self.variable:
-            tmp = list(dict[variable].values)
-            if variable == 'data':
-                tmp_list = []
-                for data1 in tmp:
-                    tmp_list.append(Testcase.list_data(self,data1))
-                tmp = tmp_list
-            #设置动态变量
-            name = locals()
-            name['%s' % variable] = tmp
-        for i in range(len(name.get('path'))):
-           list1 = []
-           for j in self.variable:
-               list1.append(name.get(j)[i])
-           yield list1
+        #打开测试用例存放的文件
+        book = xlrd.open_workbook(self.__path)
+        #打开测试用例表
+        testcase = book.sheet_by_index(0)
+        variable = testcase.row_values(0)
+        for i in range(1,testcase.nrows):
+            data = testcase.row_values(i)
+            yield dict(zip(variable,data))
