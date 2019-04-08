@@ -21,8 +21,9 @@ class SaveTestCase(unittest.TestCase):
         self.assertEqual(text['message'], testcase['message'], msg='%s登录失败' %(data['username']))
     def test_getinfo(self):
         testcase = next(self.__readcase)
-        #tmp = read_csv.read_csv(r'C:\Users\zhangqin\Desktop', 'id.txt','id').read()
-        id = '59241b9855b54278ac006def'
+        tmp = read_csv.read_csv(r'C:\Users\zhangqin\Desktop', 'id.txt').read()
+        id = next(tmp)
+        print(id)
         path = testcase['path'] + id
         url = Url.url(path)
         res = requests.request(testcase['method'], url, headers=self.__headers)
